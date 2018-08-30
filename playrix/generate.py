@@ -10,7 +10,19 @@ from .utils import random_uid, random_level, random_string
 
 
 class RandomGameEntity:
+    """
+    Generates a random game entity.
 
+    The class generates a random set of values and converts them into XML
+    format. Note that the process of data generation and building of XML
+    content are separated from each other.
+
+    Example:
+    >>> entity = RandomGameEntity()
+    >>> entity.build()
+    >>> xml_content = entity.to_xml()
+
+    """
     def __init__(self, uid=None, level=None):
         self.uid = uid or random_uid()
         self.level = level or random_level()
@@ -41,7 +53,9 @@ def default_factory(*args, **kwargs):
 
 
 class RandomArchive:
-
+    """
+    Creates a ZIP-archive with randomly generated XML files.
+    """
     def __init__(self, filename, n_entities=100, factory=default_factory):
         self.filename = filename
         self.n_entities = n_entities
