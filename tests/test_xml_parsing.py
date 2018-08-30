@@ -46,7 +46,8 @@ def all_has_valid_level(actual, expected):
 def all_has_valid_objects(actual, expected, objects):
     return all([actual[name]['objects'] == objects for name in expected])
 
-@pytest.fixture()
+
+@pytest.fixture
 def xml():
     return dedent('''
     <root>
@@ -61,7 +62,7 @@ def xml():
     ''')
 
 
-@pytest.fixture()
+@pytest.fixture
 def archive(xml, tmpdir):
     filename = tmpdir.join('archive.zip')
     xml_file = tmpdir.join('content.xml')
