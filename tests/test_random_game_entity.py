@@ -1,6 +1,3 @@
-import pytest
-import lxml
-
 from playrix.generate import RandomGameEntity
 
 

@@ -3,3 +3,4 @@
 venv
 **/*.py[cod]
 .pytest_cache
+*.egg-info
