@@ -13,6 +13,10 @@ def parse_entity_xml(io):
     """
     Reads content of a single XML file with game entities descriptions and
     returns its content in structured format.
+
+    Args:
+        io: String of file-like object with XML content.
+
     """
     if os.path.exists(io):
         with open(io) as file:
@@ -38,10 +42,14 @@ def parse_entity_xml(io):
         raise RuntimeError(f'invalid XML structure: missing or extra fields')
 
 
-def parse_archive(filename):
+def parse_archive(filename: str):
     """
     Reads content of an archive with XML files and returns it in structured
     format.
+
+    Args:
+        filename: Path to the ZIP-archive with XML files.
+
     """
     with zipfile.ZipFile(filename, 'r') as arch:
         content = {
@@ -50,7 +58,15 @@ def parse_archive(filename):
     return content
 
 
-def gather_summary(archive_content):
+def gather_summary(archive_content: dict):
+    """
+    Traverses nested dictionaries structure generated with `parse_archive()`
+    function to extract meta information and objects lists.
+
+    Args:
+        archive_content: Dictionary with unique file IDs, levels, and objects.
+
+    """
     level_meta, level_objects = [], []
     for filename, record in archive_content.items():
         uid, level = record['id'], record['level']
@@ -68,7 +84,7 @@ class DirectoryParser:
     An instance of the class goes through a directory with zipped XML files
     and parses their content.
     """
-    def __init__(self, folder, pattern='*.zip'):
+    def __init__(self, folder: str, pattern: str='*.zip'):
         path = Path(folder)
 
         if not path.exists():
@@ -82,7 +98,16 @@ class DirectoryParser:
     def n_files(self):
         return len(self.files)
 
-    def parse(self, num_of_workers=None):
+    def parse(self, num_of_workers: int=None):
+        """
+        Parses XML-archives using pool of workers.
+
+        Args:
+            num_of_workers: Number of workers in the pool. If not provided,
+                then the number of workers is set equal to the number available
+                CPUs.
+
+        """
         with Pool(num_of_workers or cpu_count()) as pool:
             content = pool.map(parse_archive, self.files)
             summary = pool.map(gather_summary, content)

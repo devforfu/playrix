@@ -22,6 +22,10 @@ class RandomGameEntity:
     >>> entity.build()
     >>> xml_content = entity.to_xml()
 
+    Parameters:
+        uid: Unique XML file identifier.
+        level: Random level value.
+
     """
     def __init__(self, uid=None, level=None):
         self.uid = uid or random_uid()
@@ -47,6 +51,9 @@ class RandomGameEntity:
 
 
 def default_factory(*args, **kwargs):
+    """
+    Default generator of random game entities.
+    """
     obj = RandomGameEntity()
     obj.build(*args, **kwargs)
     return obj
@@ -55,6 +62,12 @@ def default_factory(*args, **kwargs):
 class RandomArchive:
     """
     Creates a ZIP-archive with randomly generated XML files.
+
+    Parameters:
+        filename: Path to the file with generated archive.
+        n_entities: Number of XML files to be generated.
+        factory: Callable invoked to generate a random game entity.
+
     """
     def __init__(self, filename, n_entities=100, factory=default_factory):
         self.filename = filename
