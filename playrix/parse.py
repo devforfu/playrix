@@ -1,6 +1,7 @@
 import os
 import zipfile
 from pathlib import Path
+from collections import namedtuple
 from multiprocessing import Pool, cpu_count
 
 import pandas as pd
@@ -49,6 +50,19 @@ def parse_archive(filename):
     return content
 
 
+def gather_summary(archive_content):
+    level_meta, level_objects = [], []
+    for filename, record in archive_content.items():
+        uid, level = record['id'], record['level']
+        level_meta.append((uid, level))
+        for obj in record['objects']:
+            level_objects.append((uid, obj))
+    return {'meta': level_meta, 'objects': level_objects}
+
+
+ParsingResult = namedtuple('ParsingResult', ['meta', 'objects'])
+
+
 class DirectoryParser:
     """
     An instance of the class goes through a directory with zipped XML files
@@ -69,7 +83,15 @@ class DirectoryParser:
         return len(self.files)
 
     def parse(self, num_of_workers=None):
-        num_of_workers = num_of_workers or cpu_count()
-        with Pool(num_of_workers) as pool:
+        with Pool(num_of_workers or cpu_count()) as pool:
             content = pool.map(parse_archive, self.files)
-        return content
+            summary = pool.map(gather_summary, content)
+
+        meta, objects = [], []
+        for result in summary:
+            meta.extend(result['meta'])
+            objects.extend(result['objects'])
+
+        meta_df = pd.DataFrame(meta, columns=['id', 'level'])
+        objects_df = pd.DataFrame(objects, columns=['id', 'object_name'])
+        return ParsingResult(meta=meta_df, objects=objects_df)

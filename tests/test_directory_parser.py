@@ -10,9 +10,18 @@ from playrix.utils import random_string
 def test_discovering_archives_from_directory(directory):
     parser = DirectoryParser(directory)
 
+    assert parser.n_files > 0
+    assert parser.folder == directory
+
+
+def test_parsing_archives_from_directory(directory):
+    parser = DirectoryParser(directory)
+
     content = parser.parse()
 
     assert content is not None
+    assert not content.meta.empty
+    assert not content.objects.empty
 
 
 @pytest.fixture
