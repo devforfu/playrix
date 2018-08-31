@@ -68,7 +68,7 @@ class DirectoryParser:
     An instance of the class goes through a directory with zipped XML files
     and parses their content.
     """
-    def __init__(self, folder, pattern='*.zip', parallel=True):
+    def __init__(self, folder, pattern='*.zip'):
         path = Path(folder)
 
         if not folder.exists():
