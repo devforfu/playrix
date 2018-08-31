@@ -71,7 +71,7 @@ class DirectoryParser:
     def __init__(self, folder, pattern='*.zip'):
         path = Path(folder)
 
-        if not folder.exists():
+        if not path.exists():
             raise ValueError(f'file does not exist: {folder}')
 
         self.folder = path
